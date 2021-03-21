@@ -1,4 +1,12 @@
-#include <imgui.h>
+#include "Game.h"
+
+int main() {
+	Window window;
+	window.setToCenter();
+	Game game(&window);
+	game.run();
+}
+/*#include <imgui.h>
 #include <imgui-SFML.h>
 #include <iostream>
 #include <fstream>
@@ -64,4 +72,4 @@ int main() {
 	}
 
 	ImGui::SFML::Shutdown();
-}
+}*/
