@@ -1,14 +1,17 @@
 #pragma once
 #include <vector>
 #include <SFML/Graphics/Sprite.hpp>
-class Explosion {
+class Explosion 
+{
 public:
-	enum Type {
+	enum Type 
+	{
 		Small = 0,
 		Big = 1
 	};
 private:
-	struct Exp {
+	struct Exp 
+	{
 		long start_count = 0;
 		sf::Sprite sprite;
 		sf::RenderTarget* ren = 0;
@@ -16,12 +19,14 @@ private:
 		Type type = Small;
 		int score = 0;
 		Exp() = default;
-		Exp(long start_count, sf::RenderTarget* ren, sf::Vector2f pos, Type type, int score) {
+		Exp(long start_count, sf::RenderTarget* ren, sf::Vector2f pos, Type type, int score,const sf::Sprite& sprite) 
+		{
 			this->start_count = start_count;
 			this->ren = ren;
 			this->pos = pos;
 			this->type = type;
 			this->score = score;
+			this->sprite = sprite;
 		}
 	};
 	std::vector<std::vector<int>> equence =

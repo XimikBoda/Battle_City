@@ -5,7 +5,8 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 
-class Window {
+class Window 
+{
 public:
     explicit Window(const std::string &title = "Battle City", uint32_t width = 800, uint32_t height = 600);
 

@@ -1,12 +1,15 @@
 #include "Game.h"
 
-Game::Game(Window* window) {
+Game::Game(Window* window) 
+{
 	m_window = window;
 	m_texure.loadFromFile("sprites.png");
 	m_explosion.init(&m_texure);
 }
-void Game::run() {
-	while (m_run) {
+void Game::run() 
+{
+	while (m_run) 
+	{
 		event();
 		postEvents();
 		mainCycles();
@@ -16,19 +19,23 @@ void Game::run() {
 	}
 }
 
-void Game::event() {
+void Game::event() 
+{
 	sf::Event event{};
-	while (m_window->m_window.pollEvent(event)) {
+	while (m_window->m_window.pollEvent(event)) 
+	{
 
 		if (m_window->event(event)) //ImGui and windows event
 			break;
 
-		switch (event.type) {
+		switch (event.type) 
+		{
 		case sf::Event::Closed:
 			exit(0);
 			break;
 		case sf::Event::MouseButtonPressed:
-			switch (event.mouseButton.button){
+			switch (event.mouseButton.button)
+			{
 			case sf::Mouse::Button::Left:
 				m_explosion.Create(m_count, &m_window->m_window, sf::Vector2f(event.mouseButton.x, event.mouseButton.y), Explosion::Big, 0);
 				break;
@@ -45,29 +52,39 @@ void Game::event() {
 	}
 }
 
-void Game::postEvents() {
+void Game::postEvents() 
+{
 	m_window->postEvents();
 }
 
-void Game::mainCycles() {
+void Game::mainCycles() 
+{
+	if(r_exp)
+		m_explosion.Create(m_count, &m_window->m_window, 
+			sf::Vector2f(rand()%m_window->m_window.getSize().x, rand() % m_window->m_window.getSize().y), Explosion::Big, 0);
+
 	m_explosion.Update(m_count);
 }
 
-void Game::mainDraw() {
+void Game::mainDraw() 
+{
 	m_explosion.Draw();
 }
 
-void Game::imguiDraw() {
+void Game::imguiDraw() 
+{
 	ImGui::ShowDemoWindow();
 	m_window->imguiDraw();
 	ImGui::Begin("Debug");
 	ImGui::Text("Frame count %d", m_count);
 	ImGui::Text("Second count %d", m_second);
 	ImGui::Text("Real second count %d", m_r_second);
+	ImGui::Checkbox("Random explosion", &r_exp);
 	ImGui::End();
 }
 
-void Game::render() {
+void Game::render() 
+{
 	ImGui::SFML::Render(m_window->m_window);
 	m_window->m_window.display();
 	m_count++;
