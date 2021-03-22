@@ -12,7 +12,7 @@ void Explosion::Create(long start_count, sf::RenderTarget* ren, sf::Vector2f pos
 	sprite.setOrigin(16, 16);
 	sprite.setTexture(*texture);
 	sprite.setPosition(pos);
-	sprite.setScale(2,2);
+	//sprite.setScale(2,2);
 	exps.push_back(Exp(start_count, ren, pos, type, score, sprite));
 }
 

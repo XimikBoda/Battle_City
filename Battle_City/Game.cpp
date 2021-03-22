@@ -5,6 +5,9 @@ Game::Game(Window* window)
 	m_window = window;
 	m_texure.loadFromFile("sprites.png");
 	m_explosion.init(&m_texure);
+	m_level.init(&m_texure);
+	m_level.load_from_original_binary("standart_levels.bin");
+	m_level.set_map(0);
 }
 void Game::run() 
 {
@@ -68,7 +71,9 @@ void Game::mainCycles()
 
 void Game::mainDraw() 
 {
+	m_level.DrawBack(&m_window->m_window,m_count);
 	m_explosion.Draw();
+	m_level.DrawFront(&m_window->m_window);
 }
 
 void Game::imguiDraw() 
