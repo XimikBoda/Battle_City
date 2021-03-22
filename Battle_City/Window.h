@@ -22,6 +22,7 @@ public:
 
     void setFPSLimit(uint32_t fps);
 
+    sf::View getStandartView();
 
     sf::RenderWindow m_window;
     bool m_fullScreen = false;
@@ -30,6 +31,5 @@ public:
     sf::Vector2i m_windowPosition;
     std::string m_title;
     uint32_t m_fps=60;
-
 };
 
