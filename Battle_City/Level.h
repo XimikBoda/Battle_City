@@ -89,8 +89,8 @@ public:
 	void aplly_map_to_map(Map& a, Map& b, int x, int y, bool t = 1);
 	void set_map(int index);
 	sf::Vector2i get_size_curent_map();
-	void DrawBack(sf::RenderTarget* ren, long count, sf::Vector2f pos = {16,8});
-	void DrawFront(sf::RenderTarget* ren, sf::Vector2f pos = { 16,8 });
+	void DrawBack(sf::RenderTarget* ren, long count, sf::Vector2f pos = {0,0});
+	void DrawFront(sf::RenderTarget* ren, sf::Vector2f pos = { 0,0 });
 	int get_levels_count();
 };
 

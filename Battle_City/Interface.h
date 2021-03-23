@@ -4,7 +4,7 @@
 class Interface
 {
 	Level* level;
-	sf::RectangleShape rs_g,rs_d;
+	sf::RectangleShape rs;
 public:
 	void init(Level* level);
 	void Update(sf::RenderTarget* ren);

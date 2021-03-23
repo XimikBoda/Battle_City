@@ -1,6 +1,7 @@
 #include "Level.h"
 #include <fstream>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 void Level::Map::resize(int x, int y)
 {
@@ -64,6 +65,10 @@ sf::Vector2i Level::get_size_curent_map() {
 
 void Level::DrawBack(sf::RenderTarget* ren, long count, sf::Vector2f pos)
 {
+	sf::RectangleShape rs;
+	rs.setFillColor(sf::Color::Black);
+	rs.setSize(sf::Vector2f(act_map.size().x*8, act_map.size().y*8));
+	ren->draw(rs);
 	sf::Sprite sprite(*texture);
 	for (int i = 0; i < act_map.size().x; ++i)
 		for (int j = 0; j < act_map.size().y; ++j)
