@@ -44,10 +44,10 @@ void Game::event()
 			switch (event.mouseButton.button)
 			{
 			case sf::Mouse::Button::Left:
-				m_explosion.Create(m_count, &m_window->m_window, worldPos, Explosion::Big, 0);
+				m_explosion.Create(m_registry, worldPos, Explosion::Big, 0);
 				break;
 			case sf::Mouse::Button::Right:
-				m_explosion.Create(m_count, &m_window->m_window, worldPos, Explosion::Small, 0);
+				m_explosion.Create(m_registry, worldPos, Explosion::Small, 0);
 				break;
 			default:
 				break;
@@ -69,11 +69,10 @@ void Game::mainCycles()
 {
 	m_interface.Update(&m_window->m_window);
 	if(r_exp)
-		m_explosion.Create(m_count, &m_window->m_window, 
-			m_window->m_window.mapPixelToCoords(sf::Vector2i(rand()%m_window->m_window.getSize().x, 
+		m_explosion.Create(m_registry,m_window->m_window.mapPixelToCoords(sf::Vector2i(rand()%m_window->m_window.getSize().x, 
 				rand() % m_window->m_window.getSize().y)), Explosion::Big, 0);
 
-	m_explosion.Update(m_count);
+	m_explosion.Update(m_registry);
 	m_tank.Update();
 }
 
@@ -84,7 +83,7 @@ void Game::mainDraw()
 	m_tank.Draw(&m_window->m_window);
 
 	m_level.DrawFront(&m_window->m_window);
-	m_explosion.Draw();
+	Render::System::Draw<Type::Explosion>(m_registry, &m_window->m_window);//m_explosion.Draw();
 }
 
 void Game::imguiDraw() 

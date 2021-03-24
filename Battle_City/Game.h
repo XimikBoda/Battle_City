@@ -1,4 +1,6 @@
 #pragma once
+#include <entt\entity\registry.hpp>
+#include "Render.h"
 #include "Window.h"
 #include "Explosion.h"
 #include "Level.h"
@@ -14,6 +16,7 @@ private:
 	Tank m_tank;
 	bool m_run = true;
 	sf::Texture m_texure;
+	entt::registry m_registry;
 	long m_count = 0, m_second = 0, m_r_second = 0;
 	int m_select_level = 0;
 

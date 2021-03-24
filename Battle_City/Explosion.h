@@ -1,33 +1,30 @@
 #pragma once
+#include "Render.h"
 #include <vector>
 #include <SFML/Graphics/Sprite.hpp>
-class Explosion 
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <entt\entity\registry.hpp>
+
+namespace Type {
+	class Explosion {};
+};
+
+class Explosion
 {
 public:
-	enum Type 
+	enum Type
 	{
 		Small = 0,
 		Big = 1
 	};
 private:
-	struct Exp 
+	struct Data
 	{
-		long start_count = 0;
-		sf::Sprite sprite;
-		sf::RenderTarget* ren = 0;
 		sf::Vector2f pos = { 0, 0 };
 		Type type = Small;
 		int score = 0;
-		Exp() = default;
-		Exp(long start_count, sf::RenderTarget* ren, sf::Vector2f pos, Type type, int score,const sf::Sprite& sprite) 
-		{
-			this->start_count = start_count;
-			this->ren = ren;
-			this->pos = pos;
-			this->type = type;
-			this->score = score;
-			this->sprite = sprite;
-		}
+		int animation_count = 0;
+		int animation_state = 0;
 	};
 	std::vector<std::vector<int>> equence =
 	{
@@ -35,12 +32,11 @@ private:
 		{6,0,1,2,3,4,0}
 	};
 	sf::Texture* texture;
-	sf::Vector2i cord_ex = { 16*2, 0 };
-	std::vector<Exp> exps;
+	sf::Vector2i cord_ex = { 16 * 2, 0 };
 public:
+	
 	void init(sf::Texture* texture);
-	void Create(long start_count = 0, sf::RenderTarget* ren = 0, sf::Vector2f pos = { 0, 0 }, Type type = Small, int score = 0);
-	void Update(long count);
-	void Draw();
+	void Create(entt::registry& registry, sf::Vector2f pos = { 0, 0 }, Type type = Small, int score = 0);
+	void Update(entt::registry& registry);
 };
 
