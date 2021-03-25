@@ -6,10 +6,12 @@ Game::Game(Window* window)
 	m_texure.loadFromFile("sprites.png");
 	m_explosion.init(&m_texure);
 	m_interface.init(&m_level);
-	m_tank.init(&m_texure);
+	m_tankType.init(&m_texure);
 	m_level.init(&m_texure);
 	m_level.load_from_original_binary("standart_levels.bin");
 	m_level.set_map(0);
+	Tank::System::AddTank(m_registry, { 8,8 });
+	Control::System::Init(m_registry);
 }
 void Game::run() 
 {
@@ -62,25 +64,33 @@ void Game::event()
 
 void Game::postEvents() 
 {
+	Control::System::ResertStates(m_registry);
 	m_window->postEvents();
 }
 
 void Game::mainCycles() 
 {
+	Control::System::KeyboardMovement(m_registry);
+	Control::System::ApplyMovement(m_registry);
+
+	Tank::System::UpdateKeyState(m_registry);
+	Tank::System::UpdateRotation(m_registry);
+	Tank::System::UpdatePos(m_registry,m_tankType);
+	Tank::System::UpdateSprites(m_registry, m_tankType);
+
 	m_interface.Update(&m_window->m_window);
 	if(r_exp)
 		m_explosion.Create(m_registry,m_window->m_window.mapPixelToCoords(sf::Vector2i(rand()%m_window->m_window.getSize().x, 
 				rand() % m_window->m_window.getSize().y)), Explosion::Big, 0);
 
 	m_explosion.Update(m_registry);
-	m_tank.Update();
 }
 
 void Game::mainDraw() 
 {
 	m_interface.Draw(&m_window->m_window);
 	m_level.DrawBack(&m_window->m_window, m_count);
-	m_tank.Draw(&m_window->m_window);
+	Render::System::Draw<Type::Tank>(m_registry, &m_window->m_window);//m_tank.Draw(&m_window->m_window);
 
 	m_level.DrawFront(&m_window->m_window);
 	Render::System::Draw<Type::Explosion>(m_registry, &m_window->m_window);//m_explosion.Draw();
@@ -90,7 +100,7 @@ void Game::imguiDraw()
 {
 	ImGui::ShowDemoWindow();
 	m_window->imguiDraw();
-	m_tank.imguiDraw();
+	Tank::System::imguiDraw(m_registry);
 	ImGui::Begin("Debug");
 	ImGui::Text("Frame count %d", m_count);
 	ImGui::Text("Second count %d", m_second);

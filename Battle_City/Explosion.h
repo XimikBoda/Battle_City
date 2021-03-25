@@ -32,7 +32,7 @@ private:
 		{6,0,1,2,3,4,0}
 	};
 	sf::Texture* texture;
-	sf::Vector2i cord_ex = { 16 * 2, 0 };
+	sf::Vector2i cord_ex = { 16 * 2*4, 0 };
 public:
 	
 	void init(sf::Texture* texture);

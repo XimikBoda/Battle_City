@@ -13,7 +13,7 @@ private:
 	Explosion m_explosion;
 	Level m_level;
 	Interface m_interface;
-	Tank m_tank;
+	TankType m_tankType;
 	bool m_run = true;
 	sf::Texture m_texure;
 	entt::registry m_registry;
