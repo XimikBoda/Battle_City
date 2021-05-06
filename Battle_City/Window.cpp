@@ -92,3 +92,7 @@ void Window::setFPSLimit(uint32_t fps)
     m_window.setFramerateLimit(fps);
     m_fps = fps;
 }
+
+sf::View Window::getStandartView() {
+    return sf::View(sf::FloatRect(0.f, 0.f, (float)m_window.getSize().x, (float)m_window.getSize().y));
+}

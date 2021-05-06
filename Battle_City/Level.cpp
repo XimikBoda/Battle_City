@@ -1,14 +1,17 @@
 #include "Level.h"
+#include "Tank.h"
 #include <fstream>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <entt\entity\registry.hpp>
 
-void Level::map::resize(int x, int y)
+void Level::Map::resize(int x, int y)
 {
 	map.clear();
 	map.resize(y, std::vector<uint8_t>(x));
 }
 
-sf::Vector2i Level::map::size()
+sf::Vector2i Level::Map::size()
 {
 	return sf::Vector2i((map.size() ? map[0].size() : 0), map.size());
 }
@@ -28,13 +31,13 @@ void Level::load_from_original_binary(const std::string& str, int w, int h)
 	unsigned char* buf = new unsigned char[buf_s];
 	in.read((char*)buf, buf_s);
 	in.close();
-	map tmp;
-	tmp.resize(w, h);
-	for (int i = 0; i < buf_s / (w * h); ++i)
+	Map tmp;
+	tmp.resize(w*2, h*2);
+	for (int i = 0; i < buf_s / (w * h / 2); ++i)
 	{
-		for (int j = 0; j < w * h * 2; ++j)
+		for (int j = 0; j < w * h; ++j)
 		{
-			uint8_t c = 0xF & (buf[i * w * h + j / 2] >> 4 * !(j % 2));
+			uint8_t c = 0xF & (buf[i * w * h / 2 + j / 2] >> 4 * !(j % 2));
 			aplly_map_to_map(tmp, bin_decode[c], 2 * (j % h), 2 * (j / h));
 		}
 		maps.push_back(tmp);
@@ -42,7 +45,7 @@ void Level::load_from_original_binary(const std::string& str, int w, int h)
 	delete[] buf;
 }
 
-void Level::aplly_map_to_map(map& a, map& b, int x, int y, bool t)
+void Level::aplly_map_to_map(Map& a, Map& b, int x, int y, bool t)
 {
 	auto size_a = a.size(), size_b = b.size();
 	if (x < 0 || x + size_b.x > size_a.x || y < 0 || y + size_b.y > size_a.y)
@@ -50,43 +53,74 @@ void Level::aplly_map_to_map(map& a, map& b, int x, int y, bool t)
 	for (int i = 0; i < size_b.x; ++i)
 		for (int j = 0; j < size_b.y; ++j)
 			if (t || b.map[j][i])
-				a.map[j + y][i + x] = b.map[i][j];
+				a.map[j + y][i + x] = b.map[j][i];
 }
 
 void Level::set_map(int index)
 {
 	act_map = maps[index];
+	col_map.clear();
+	col_map.resize(act_map.size().y, std::vector<Col_bl>(act_map.size().x));
 }
 
-void Level::DrawBack(sf::RenderTarget* ren, long count)
+sf::Vector2i Level::get_size_curent_map() {
+	return act_map.size();
+}
+
+void Level::DrawBack(sf::RenderTarget* ren, long count, sf::Vector2f pos)
 {
+	sf::RectangleShape rs;
+	rs.setFillColor(sf::Color::Black);
+	rs.setSize(sf::Vector2f(act_map.size().x*8, act_map.size().y*8));
+	ren->draw(rs);
 	sf::Sprite sprite(*texture);
 	for (int i = 0; i < act_map.size().x; ++i)
 		for (int j = 0; j < act_map.size().y; ++j)
 		{
 			uint8_t t = act_map.map[j][i];
-			if (t == 13)
-				t += (count / 32) % 3;
-			if (t < 30 && t != 11) 
+			if (t == 0x13)
+				t += (count / 32) % 2;
+			if (t < 30 && t != 0x11) 
 			{
 				sprite.setPosition(i*8,j*8);
-				sprite.setTextureRect(sf::IntRect(cord_bl.x + t % 15, cord_bl.y + t / 15, 8, 8));
+				sprite.move(pos);
+				sprite.setTextureRect(sf::IntRect(cord_bl.x + 8*(t % 15), cord_bl.y + 8*(t / 15), 8, 8));
 				ren->draw(sprite);
 			}
 		}
 }
 
-void Level::DrawFront(sf::RenderTarget* ren)
+void Level::DrawFront(sf::RenderTarget* ren, sf::Vector2f pos)
 {
 	sf::Sprite sprite(*texture);
 	for (int i = 0; i < act_map.size().x; ++i)
 		for (int j = 0; j < act_map.size().y; ++j)
 		{
 			uint8_t t = act_map.map[j][i];
-			if (t == 11) {
+			if (t == 0x11) {
 				sprite.setPosition(i * 8, j * 8);
-				sprite.setTextureRect(sf::IntRect(cord_bl.x + t % 15, cord_bl.y + t / 15, 8, 8));
+				sprite.move(pos);
+				sprite.setTextureRect(sf::IntRect(cord_bl.x + 8 * (t % 15), cord_bl.y + 8 * (t / 15), 8, 8));
 				ren->draw(sprite);
 			}
 		}
 }
+
+
+int Level::get_levels_count()
+{
+	return maps.size();
+}
+
+uint8_t Level::get_block(int x, int y) {
+	if (x >= 0 && y >= 0 && x < act_map.size().x && y < act_map.size().y)
+		return act_map.map[y][x];
+	else
+		return -1;
+}
+
+bool Level::is_air(uint8_t bl)
+{
+	return bl == 0 || bl == 18;
+}
+
