@@ -75,7 +75,7 @@ void Game::mainCycles()
 
 	Tank::System::UpdateKeyState(m_registry);
 	Tank::System::UpdateRotation(m_registry);
-	Tank::System::UpdatePos(m_registry,m_tankType);
+	Tank::System::UpdatePos(m_registry,m_tankType,m_level);
 	Tank::System::UpdateSprites(m_registry, m_tankType);
 
 	m_interface.Update(&m_window->m_window);
@@ -93,6 +93,7 @@ void Game::mainDraw()
 	Render::System::Draw<Type::Tank>(m_registry, &m_window->m_window);//m_tank.Draw(&m_window->m_window);
 
 	m_level.DrawFront(&m_window->m_window);
+	Tank::System::DrawColosion(&m_window->m_window, m_registry);
 	Render::System::Draw<Type::Explosion>(m_registry, &m_window->m_window);//m_explosion.Draw();
 }
 
@@ -100,7 +101,7 @@ void Game::imguiDraw()
 {
 	ImGui::ShowDemoWindow();
 	m_window->imguiDraw();
-	Tank::System::imguiDraw(m_registry);
+	Tank::System::imguiDraw(m_registry,m_level);
 	ImGui::Begin("Debug");
 	ImGui::Text("Frame count %d", m_count);
 	ImGui::Text("Second count %d", m_second);

@@ -1,7 +1,9 @@
 #include "Level.h"
+#include "Tank.h"
 #include <fstream>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <entt\entity\registry.hpp>
 
 void Level::Map::resize(int x, int y)
 {
@@ -57,6 +59,8 @@ void Level::aplly_map_to_map(Map& a, Map& b, int x, int y, bool t)
 void Level::set_map(int index)
 {
 	act_map = maps[index];
+	col_map.clear();
+	col_map.resize(act_map.size().y, std::vector<Col_bl>(act_map.size().x));
 }
 
 sf::Vector2i Level::get_size_curent_map() {
@@ -102,7 +106,21 @@ void Level::DrawFront(sf::RenderTarget* ren, sf::Vector2f pos)
 		}
 }
 
+
 int Level::get_levels_count()
 {
 	return maps.size();
 }
+
+uint8_t Level::get_block(int x, int y) {
+	if (x >= 0 && y >= 0 && x < act_map.size().x && y < act_map.size().y)
+		return act_map.map[y][x];
+	else
+		return -1;
+}
+
+bool Level::is_air(uint8_t bl)
+{
+	return bl == 0 || bl == 18;
+}
+

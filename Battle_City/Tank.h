@@ -1,6 +1,7 @@
 #pragma once
 #include "Render.h"
 #include "Control.h"
+#include "Level.h"
 #include <vector>
 #include <string>
 #include <imgui.h>
@@ -49,6 +50,16 @@ namespace Tank
 		{
 			int new_rotate;
 		};
+		struct NeedAiRotate
+		{
+			int new_rotate;
+		};
+	}
+	namespace Mark
+	{
+		struct AI {};
+		struct P1 {};
+		struct P2 {};
 	}
 	namespace Component
 	{
@@ -68,19 +79,25 @@ namespace Tank
 			int number = 0;
 			int type_ind = 0;
 			int anim_c=0;
+			unsigned char live_time = 0;
 		};
 		struct MapPos
 		{
 			sf::Vector2i pos = { 0,0 };
 		};
 	}
+	namespace Helper {
+		sf::Vector2i GetPosInWorld(const Tank::Component::MoveData& moveData);
+	}
 	namespace System {
 		void AddTank(entt::registry& registry, sf::Vector2i pos, int number = 0, int type_ind = 0, int rotate = 0);
 		void UpdateKeyState(entt::registry& registry);
 		void UpdateRotation(entt::registry& registry);
-		void UpdatePos(entt::registry& registry, TankType& tankType);
+		void UpdateAiRotation(entt::registry& registry);
+		void UpdatePos(entt::registry& registry, TankType& tankType, Level& level);
 		void UpdateSprites(entt::registry& registry, TankType& tankType);
-		void imguiDraw(entt::registry& registry);
+		void DrawColosion(sf::RenderTarget* ren, entt::registry& registry, sf::Vector2f pos = {0,0});
+		void imguiDraw(entt::registry& registry, Level& m_level);
 	}
 };
 
