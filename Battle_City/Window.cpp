@@ -1,6 +1,6 @@
 #include "Window.h"
 
-Window::Window(const std::string& title, uint32_t width, uint32_t height) 
+Window::Window(const std::string& title, uint32_t width, uint32_t height)
 {
     m_window.create(sf::VideoMode(width, height), title);
     m_window.setFramerateLimit(m_fps);
@@ -12,7 +12,7 @@ Window::Window(const std::string& title, uint32_t width, uint32_t height)
     m_title = title;
 }
 
-void Window::setToCenter() 
+void Window::setToCenter()
 {
     sf::VideoMode screenMode = sf::VideoMode::getDesktopMode();
     sf::Vector2u windowSize = m_window.getSize();
@@ -20,7 +20,7 @@ void Window::setToCenter()
         ((int)screenMode.height - (int)windowSize.y) / 2));
 }
 
-void Window::imguiDraw() 
+void Window::imguiDraw()
 {
     sf::Vector2u windowSize = m_window.getSize();
     sf::Vector2i windowPosition = m_window.getPosition();
@@ -40,7 +40,7 @@ void Window::imguiDraw()
     if (ImGui::InputInt2("Window Size", reinterpret_cast<int*>(&windowSize.x)))
         m_window.setSize(windowSize);
 
-    if (ImGui::InputInt2("Window Position", &windowPosition.x)) 
+    if (ImGui::InputInt2("Window Position", &windowPosition.x))
     {
         m_window.setPosition(windowPosition);
     }
@@ -64,21 +64,21 @@ bool Window::event(sf::Event& event) {
     return false;
 }
 
-void Window::postEvents() 
+void Window::postEvents()
 {
     m_window.clear(sf::Color(20, 20, 20));
     ImGui::SFML::Update(m_window, m_deltaClock.restart());
 }
 
-void Window::setFullScreen(bool fullScreen) 
+void Window::setFullScreen(bool fullScreen)
 {
-    if (fullScreen && !m_fullScreen) 
+    if (fullScreen && !m_fullScreen)
     {
         m_windowSize = m_window.getSize();
         m_windowPosition = m_window.getPosition();
         m_window.create(sf::VideoMode::getDesktopMode(), m_title, sf::Style::Fullscreen);
     }
-    else if (!fullScreen && m_fullScreen) 
+    else if (!fullScreen && m_fullScreen)
     {
         m_window.create(sf::VideoMode(m_windowSize.x, m_windowSize.y), m_title);
         m_window.setPosition(m_windowPosition);
@@ -87,8 +87,12 @@ void Window::setFullScreen(bool fullScreen)
     m_fullScreen = fullScreen;
 }
 
-void Window::setFPSLimit(uint32_t fps) 
+void Window::setFPSLimit(uint32_t fps)
 {
     m_window.setFramerateLimit(fps);
     m_fps = fps;
+}
+
+sf::View Window::getStandartView() {
+    return sf::View(sf::FloatRect(0.f, 0.f, (float)m_window.getSize().x, (float)m_window.getSize().y));
 }

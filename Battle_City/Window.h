@@ -5,10 +5,10 @@
 #include <imgui.h>
 #include <imgui-SFML.h>
 
-class Window 
+class Window
 {
 public:
-    explicit Window(const std::string &title = "Battle City", uint32_t width = 800, uint32_t height = 600);
+    explicit Window(const std::string& title = "Battle City", uint32_t width = 800, uint32_t height = 600);
 
     void setToCenter();
 
@@ -22,6 +22,7 @@ public:
 
     void setFPSLimit(uint32_t fps);
 
+    sf::View getStandartView();
 
     sf::RenderWindow m_window;
     bool m_fullScreen = false;
@@ -29,7 +30,6 @@ public:
     sf::Vector2u m_windowSize;
     sf::Vector2i m_windowPosition;
     std::string m_title;
-    uint32_t m_fps=60;
-
+    uint32_t m_fps = 60;
 };
 
