@@ -4,6 +4,8 @@
 #include "Level.h"
 #include "Interface.h"
 #include "Tank.h"
+#include "Controls.h"
+#include "Bullet.h"
 class Game
 {
 private:
@@ -12,6 +14,8 @@ private:
 	Level m_level;
 	Interface m_interface;
 	Tanks m_tanks;
+	Controls m_controls;
+	Bullets m_bullets;
 	bool m_run = true;
 	sf::Texture m_texure;
 	long m_count = 0, m_second = 0, m_r_second = 0;

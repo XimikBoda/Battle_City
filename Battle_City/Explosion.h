@@ -29,6 +29,7 @@ private:
 			this->sprite = sprite;
 		}
 	};
+	sf::RenderTarget* ren = 0;
 	std::vector<std::vector<int>> equence =
 	{
 		{3,0,1,2},
@@ -38,8 +39,9 @@ private:
 	sf::Vector2i cord_ex = { 16 * 2 * 4, 0 };
 	std::vector<Exp> exps;
 public:
-	void init(sf::Texture* texture);
-	void Create(long start_count = 0, sf::RenderTarget* ren = 0, sf::Vector2f pos = { 0, 0 }, Type type = Small, int score = 0);
+	void init(sf::Texture* texture, sf::RenderTarget* ren);
+	void Create(long start_count = 0, sf::Vector2f pos = { 0, 0 }, Type type = Small, int score = 0, sf::RenderTarget* ren = 0);
+	void Create(long start_count = 0, sf::Vector2i pos = { 0, 0 }, Type type = Small, int score = 0, sf::RenderTarget* ren = 0);
 	void Update(long count);
 	void Draw();
 };

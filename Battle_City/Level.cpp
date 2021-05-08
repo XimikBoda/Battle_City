@@ -168,7 +168,12 @@ uint8_t Level::get_block(int x, int y) {
 	if (x >= 0 && y >= 0 && x < act_map.size().x && y < act_map.size().y)
 		return act_map.map[y][x];
 	else
-		return -1;
+		return 0xff;
+}
+void Level::set_block(int x, int y, uint8_t bl)
+{
+	if (x >= 0 && y >= 0 && x < act_map.size().x && y < act_map.size().y)
+		act_map.map[y][x]=bl;
 }
 uint8_t Level::get_collision(int x, int y) {
 	if (x >= 0 && y >= 0 && x < act_map.size().x && y < act_map.size().y)

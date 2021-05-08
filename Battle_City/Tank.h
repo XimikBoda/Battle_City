@@ -1,6 +1,7 @@
 #pragma once
-#include "Control.h"
+#include "Controls.h"
 #include "Level.h"
+#include "Bullet.h"
 #include <vector>
 #include <string>
 #include <imgui.h>
@@ -16,18 +17,19 @@ public:
 		int speed; // px(/frame)
 		int max_bullet_count;
 		int bullet_speed;// px/frame
+		bool bullet_power;
 		sf::Vector2i cord_sprite;
 	};
 	std::vector<TankType_d> tanks_types =
 	{
-		{3, 1, 2, {0, 0 * 16}},
-		{3, 1, 4, {0, 1 * 16}},
-		{3, 2, 2, {0, 2 * 16}},
-		{3, 2, 2, {0, 3 * 16}},
-		{2, 1, 2, {0, 4 * 16}},
-		{4, 1, 4, {0, 5 * 16}},
-		{2, 1, 2, {0, 6 * 16}},
-		{2, 1, 2, {0, 7 * 16}}
+		{3, 1, 2, 0, {0, 0 * 16}},
+		{3, 1, 4, 0, {0, 1 * 16}},
+		{3, 2, 2, 0, {0, 2 * 16}},
+		{3, 2, 2, 1, {0, 3 * 16}},
+		{2, 1, 2, 0, {0, 4 * 16}},
+		{4, 1, 4, 0, {0, 5 * 16}},
+		{2, 1, 2, 0, {0, 6 * 16}},
+		{2, 1, 2, 0, {0, 7 * 16}}
 	};
 	sf::Texture* texture;
 	void init(sf::Texture* texture)
@@ -49,21 +51,24 @@ class Tanks
 		int anim_c = 0;
 		unsigned char live_time = 0;
 		bool ai = 0;
+		int state=0;
 	};
 	bool draw_colision = false;
 	Level* m_level = 0;
 	std::vector<Tank> tanks;
 	TankType tankType;
+	Bullets *m_bullets;
 
 	sf::Vector2i GetPosInWorld(const Tank& tank);
 	void Rotate(Tank& tank, int new_rotate = 0);
 	void changeDirection(Tank& tank);
 	void changeDirection2(Tank tank);
 public:
-	void init(Level* level, sf::Texture* texture);
+	void init(Level* level, sf::Texture* texture, Bullets* bullets);
 	//void AddTank(entt::registry& registry, sf::Vector2i pos, int number = 0, int type_ind = 0, int rotate = 0);
 	//void UpdateKeyState(entt::registry& registry);
 	void UpdateAi();
+	void UpdateP(Controls& controls);
 	void UpdatePos(Level& level);
 
 	void Draw(sf::RenderTarget* ren);

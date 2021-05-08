@@ -99,6 +99,7 @@ public:
 	void DrawFront(sf::RenderTarget* ren, sf::Vector2f pos = { 0,0 });
 	int get_levels_count();
 	uint8_t get_block(int x, int y);
+	void set_block(int x, int y, uint8_t bl);
 	uint8_t get_collision(int x, int y);
 	bool is_air(int x, int y, bool cheak_col=0);
 	bool is_air(uint8_t bl);

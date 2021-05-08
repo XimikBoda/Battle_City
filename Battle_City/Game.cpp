@@ -1,19 +1,20 @@
 #include "Game.h"
 
-Game::Game(Window* window) 
+Game::Game(Window* window)
 {
 	m_window = window;
 	m_texure.loadFromFile("sprites.png");
-	m_explosion.init(&m_texure);
+	m_explosion.init(&m_texure, &m_window->m_window);
 	m_interface.init(&m_level);
-	m_tanks.init(&m_level,&m_texure);
+	m_tanks.init(&m_level, &m_texure,&m_bullets);
+	m_bullets.init(&m_texure,&m_level,&m_explosion,&m_count);
 	m_level.init(&m_texure);
 	m_level.load_from_original_binary("standart_levels.bin");
 	m_level.set_map(0);
 }
-void Game::run() 
+void Game::run()
 {
-	while (m_run) 
+	while (m_run)
 	{
 		event();
 		postEvents();
@@ -24,16 +25,16 @@ void Game::run()
 	}
 }
 
-void Game::event() 
+void Game::event()
 {
 	sf::Event event{};
-	while (m_window->m_window.pollEvent(event)) 
+	while (m_window->m_window.pollEvent(event))
 	{
 
 		if (m_window->event(event)) //ImGui and windows event
 			break;
 
-		switch (event.type) 
+		switch (event.type)
 		{
 		case sf::Event::Closed:
 			exit(0);
@@ -44,10 +45,10 @@ void Game::event()
 			switch (event.mouseButton.button)
 			{
 			case sf::Mouse::Button::Left:
-				m_explosion.Create(m_count, &m_window->m_window, worldPos, Explosion::Big, 0);
+				//m_explosion.Create(m_count, &m_window->m_window, worldPos, Explosion::Big, 0);
 				break;
 			case sf::Mouse::Button::Right:
-				m_explosion.Create(m_count, &m_window->m_window, worldPos, Explosion::Small, 0);
+				//m_explosion.Create(m_count, &m_window->m_window, worldPos, Explosion::Small, 0);
 				break;
 			default:
 				break;
@@ -60,33 +61,37 @@ void Game::event()
 	}
 }
 
-void Game::postEvents() 
+void Game::postEvents()
 {
 	m_window->postEvents();
 }
 
-void Game::mainCycles() 
+void Game::mainCycles()
 {
+	m_controls.Update();
 	m_interface.Update(&m_window->m_window);
 	/*if (r_exp)
 		m_explosion.Create(m_registry, m_window->m_window.mapPixelToCoords(sf::(rand() % m_window->m_window.getSize().x,
 			rand() % m_window->m_window.getSize().y)), Explosion::Big, 0);*/
+	m_bullets.Update();
 	m_tanks.UpdateAi();
+	m_tanks.UpdateP(m_controls);
 	m_tanks.UpdatePos(m_level);
 	m_explosion.Update(m_count);
 }
 
-void Game::mainDraw() 
+void Game::mainDraw()
 {
 	m_interface.Draw(&m_window->m_window);
-	m_level.DrawBack(&m_window->m_window,m_count);
+	m_level.DrawBack(&m_window->m_window, m_count);
 	m_tanks.Draw(&m_window->m_window);
+	m_bullets.Draw(&m_window->m_window);
 	m_level.DrawFront(&m_window->m_window);
 	m_explosion.Draw();
 	m_tanks.DrawColosion(&m_window->m_window);
 }
 
-void Game::imguiDraw() 
+void Game::imguiDraw()
 {
 	ImGui::ShowDemoWindow();
 	m_window->imguiDraw();
@@ -101,7 +106,7 @@ void Game::imguiDraw()
 	ImGui::End();
 }
 
-void Game::render() 
+void Game::render()
 {
 	ImGui::SFML::Render(m_window->m_window);
 	m_window->m_window.display();

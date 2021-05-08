@@ -62,11 +62,14 @@ void Tanks::changeDirection2(Tank tank) {
 		Rotate(tank, tank.rotation + 4 - 1);
 }
 
-void Tanks::init(Level* level, sf::Texture* texture) {
+void Tanks::init(Level* level, sf::Texture* texture, Bullets* bullets) {
 	m_level = level;
+	m_bullets = bullets;
 	tanks.resize(6);
 	tankType.init(texture);
+	tanks[0]={{8 * 8 + 8,26 * 8 + 8},0,0,0,1,1,-1 };
 }
+
 
 //void AddTank(entt::registry& registry, sf::Vector2i pos, int number = 0, int type_ind = 0, int rotate = 0);
 //void UpdateKeyState(entt::registry& registry);
@@ -83,16 +86,43 @@ void Tanks::UpdateAi()
 		{
 			auto& tank = tanks[i];
 			int tmp = tankType.tanks_types[tank.type_ind].speed;
-			if (!(tmp == 4 || !(tank.time_to_move == (4 - tmp))))
+			if (!(tmp == 4 || ((tank.time_to_move + 1) % tmp)))
 				continue;
 			if (tank.pos.x % 8 == 0 && tank.pos.y % 8 == 0 && rand() % 16 == 0)
 				changeDirection(tank);///
 			else if (!tank.can_move && rand() % 4 == 0)
 			{
-				if (tank.pos.x != 0 || tank.pos.x % 8 != 0)
+				if (tank.pos.x % 8 != 0 || tank.pos.y % 8 != 0)
 					Rotate(tank, tank.rotation + 2);
 				else
 					changeDirection2(tank);
+			}
+			if (rand()%32==0) {
+				sf::Vector2i moveVec((tank.rotation == 1) - (tank.rotation == 3), (tank.rotation == 2) - (tank.rotation == 0));
+				moveVec.x *= 8;
+				moveVec.y *= 8;
+				m_bullets->AddBullet(tank.pos + moveVec, tank.rotation, tankType.tanks_types[tank.type_ind].bullet_speed, tankType.tanks_types[tank.type_ind].bullet_power, i);
+			}
+		}
+}
+
+void Tanks::UpdateP(Controls& controls)
+{
+	for (int i = 0; i < 2; ++i)
+		if (tanks[i].active && !tanks[i].ai)
+		{
+			auto& tank = tanks[i];
+			auto& control = controls.control[i];
+			if (tank.is_move = (control.up || control.down || control.left || control.right))
+				if (!((control.up && tank.rotation == 0) || (control.right && tank.rotation == 1) ||
+					(control.down && tank.rotation == 2) || (control.left && tank.rotation == 3)))
+					Rotate(tank,(control.up ? 0 : (control.right ? 1 :
+						(control.down ? 2 : (control.left ? 3 : 0)))));
+			if (control.shot) {
+				sf::Vector2i moveVec((tank.rotation == 1) - (tank.rotation == 3), (tank.rotation == 2) - (tank.rotation == 0));
+				moveVec.x *= 8;
+				moveVec.y *= 8;
+				m_bullets->AddBullet(tank.pos+ moveVec,tank.rotation,tankType.tanks_types[tank.type_ind].bullet_speed, tankType.tanks_types[tank.type_ind].bullet_power,i);
 			}
 
 		}
@@ -182,6 +212,7 @@ void Tanks::imguiDraw(Level& m_level) {
 			ImGui::InputInt2("Pos", &tank.pos.x);
 			ImGui::InputInt("Time to move", &tank.time_to_move);
 			ImGui::InputInt("Rotate", (int*)&tank.rotation);
+			ImGui::InputInt("State", &tank.state);
 			ImGui::Checkbox("Is move", &tank.is_move);
 			ImGui::Checkbox("Can move", &tank.can_move);
 			auto xy = GetPosInWorld(tank);
