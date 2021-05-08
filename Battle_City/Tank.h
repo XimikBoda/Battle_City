@@ -9,6 +9,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <iostream>
 class TankType
 {
 public:
@@ -54,22 +55,30 @@ class Tanks
 		int state=0;
 	};
 	bool draw_colision = false;
-	Level* m_level = 0;
-	std::vector<Tank> tanks;
 	TankType tankType;
-	Bullets *m_bullets;
+	std::vector<Tank> tanks;
+	Level* m_level;
+	Bullets* m_bullets;
+	Explosion* m_explosion;
 
 	sf::Vector2i GetPosInWorld(const Tank& tank);
 	void Rotate(Tank& tank, int new_rotate = 0);
 	void changeDirection(Tank& tank);
 	void changeDirection2(Tank tank);
+	void Destroy(Tank& tank);
 public:
-	void init(Level* level, sf::Texture* texture, Bullets* bullets);
+	void init(Level* level, sf::Texture* texture, Bullets* bullets, Explosion* explosion);
 	//void AddTank(entt::registry& registry, sf::Vector2i pos, int number = 0, int type_ind = 0, int rotate = 0);
 	//void UpdateKeyState(entt::registry& registry);
+	void HitBy(int tank_to, int tank_by) {
+		//std::cout << "Hit to " << tank_to << " by " << tank_by << '\n';
+		if (tank_to < 0 && tank_to >= tanks.size() && tank_by < 0 && tank_by >= tanks.size())
+			return;
+		Destroy(tanks[tank_to]);
+	}
 	void UpdateAi();
 	void UpdateP(Controls& controls);
-	void UpdatePos(Level& level);
+	void UpdatePos();
 
 	void Draw(sf::RenderTarget* ren);
 	void DrawColosion(sf::RenderTarget* ren, sf::Vector2f pos = { 0,0 });

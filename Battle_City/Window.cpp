@@ -58,6 +58,16 @@ bool Window::event(sf::Event& event) {
     case sf::Event::Resized:
         m_window.setView(sf::View(sf::FloatRect(0.f, 0.f, (float)event.size.width, (float)event.size.height)));
         break;
+    case sf::Event::KeyPressed:
+        switch (event.key.code)
+        {
+        case sf::Keyboard::F11:
+            setFullScreen(!m_fullScreen);
+            break;
+        default:
+            break;
+        }
+        break;
     default:
         break;
     }

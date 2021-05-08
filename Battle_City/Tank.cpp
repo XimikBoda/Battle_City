@@ -1,38 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "Tank.h"
 
-/*
-void Tanks::AddTank(entt::registry& registry, sf::Vector2i pos, int number, int type_ind, int rotate)
-{
-	auto entity = registry.create();
-	sf::Sprite sprite;
-	registry.emplace<Render::Component::DrawElement>(entity, sprite);
-	registry.emplace<Tank::Component::Data>(entity, number, type_ind);
-	registry.emplace<Tank::Component::MoveData>(entity, pos, rotate);
-	registry.emplace<Type::Tank>(entity);
-	registry.emplace<Control::Mark::ControlledExistence1>(entity);
-	registry.emplace<Control::Component::KeyState>(entity);
-	registry.emplace<Tank::Component::KeyState>(entity);
-}
-
-void Tanks::UpdateKeyState(entt::registry& registry)
-{
-	auto view = registry.view<Tank::Component::KeyState, Control::Component::KeyState, Tank::Component::MoveData>();
-	for (auto [entity, locKeyState, keyState, moveState] : view.each())
-	{
-		locKeyState.up = keyState.up > 0.5;
-		locKeyState.down = keyState.down > 0.5;
-		locKeyState.right = keyState.right > 0.5;
-		locKeyState.left = keyState.left > 0.5;
-		locKeyState.shot = keyState.shot > 0.5;
-		if (moveState.is_move = (locKeyState.up || locKeyState.down || locKeyState.left || locKeyState.right))
-			if (!((locKeyState.up && moveState.rotation == 0) || (locKeyState.right && moveState.rotation == 1) ||
-				(locKeyState.down && moveState.rotation == 2) || (locKeyState.left && moveState.rotation == 3)))
-				registry.emplace<Tank::Event::NeedRotate>(entity, (locKeyState.up ? 0 : (locKeyState.right ? 1 :
-					(locKeyState.down ? 2 : (locKeyState.left ? 3 : 0)))));
-	}
-}
-}*/
 
 sf::Vector2i Tanks::GetPosInWorld(const Tank& tank) {
 	sf::Vector2i vec((tank.pos.x - 8) / 8, (tank.pos.y - 8) / 8);
@@ -62,9 +30,18 @@ void Tanks::changeDirection2(Tank tank) {
 		Rotate(tank, tank.rotation + 4 - 1);
 }
 
-void Tanks::init(Level* level, sf::Texture* texture, Bullets* bullets) {
+void Tanks::Destroy(Tank& tank) {
+	auto xy = GetPosInWorld(tank);
+	int x = xy.x, y = xy.y;
+	m_level->aplly_map_to_map(m_level->colision_map, m_level->empty_colisoin, x, y, 1);
+	tank.active = 0;
+	m_explosion->Create(tank.pos,Explosion::Big,(tank.type_ind>=4?( tank.type_ind-3 )*100:0));
+}
+
+void Tanks::init(Level* level, sf::Texture* texture, Bullets* bullets, Explosion* explosion) {
 	m_level = level;
 	m_bullets = bullets;
+	m_explosion = explosion;
 	tanks.resize(6);
 	tankType.init(texture);
 	tanks[0]={{8 * 8 + 8,26 * 8 + 8},0,0,0,1,1,-1 };
@@ -99,8 +76,8 @@ void Tanks::UpdateAi()
 			}
 			if (rand()%32==0) {
 				sf::Vector2i moveVec((tank.rotation == 1) - (tank.rotation == 3), (tank.rotation == 2) - (tank.rotation == 0));
-				moveVec.x *= 8;
-				moveVec.y *= 8;
+				moveVec.x *= 6;
+				moveVec.y *= 6;
 				m_bullets->AddBullet(tank.pos + moveVec, tank.rotation, tankType.tanks_types[tank.type_ind].bullet_speed, tankType.tanks_types[tank.type_ind].bullet_power, i);
 			}
 		}
@@ -119,16 +96,18 @@ void Tanks::UpdateP(Controls& controls)
 					Rotate(tank,(control.up ? 0 : (control.right ? 1 :
 						(control.down ? 2 : (control.left ? 3 : 0)))));
 			if (control.shot) {
+				control.shot = 0;
+				control.shot_ = 1;
 				sf::Vector2i moveVec((tank.rotation == 1) - (tank.rotation == 3), (tank.rotation == 2) - (tank.rotation == 0));
-				moveVec.x *= 8;
-				moveVec.y *= 8;
+				moveVec.x *= 6;
+				moveVec.y *= 6;
 				m_bullets->AddBullet(tank.pos+ moveVec,tank.rotation,tankType.tanks_types[tank.type_ind].bullet_speed, tankType.tanks_types[tank.type_ind].bullet_power,i);
 			}
 
 		}
 }
 
-void Tanks::UpdatePos(Level& level)
+void Tanks::UpdatePos()
 {
 	for (int i = 0; i < tanks.size(); ++i)
 		if (tanks[i].active && tanks[i].is_move)
@@ -142,17 +121,17 @@ void Tanks::UpdatePos(Level& level)
 
 				auto xy = GetPosInWorld(tank);
 				int x = xy.x, y = xy.y;
-				if (tank.rotation == 0 && level.is_air(x, y - 1, true) && level.is_air(x + 1, y - 1, true) ||
-					tank.rotation == 1 && level.is_air(x + 2, y, true) && level.is_air(x + 2, y + 1, true) ||
-					tank.rotation == 2 && level.is_air(x, y + 2, true) && level.is_air(x + 1, y + 2, true) ||
-					tank.rotation == 3 && level.is_air(x - 1, y, true) && level.is_air(x - 1, y + 1, true))
+				if (tank.rotation == 0 && m_level->is_air(x, y - 1, true) && m_level->is_air(x + 1, y - 1, true) ||
+					tank.rotation == 1 && m_level->is_air(x + 2, y, true) && m_level->is_air(x + 2, y + 1, true) ||
+					tank.rotation == 2 && m_level->is_air(x, y + 2, true) && m_level->is_air(x + 1, y + 2, true) ||
+					tank.rotation == 3 && m_level->is_air(x - 1, y, true) && m_level->is_air(x - 1, y + 1, true))
 				{
 					tank.pos += moveVec;
 					tank.can_move = 1;
 					if (xy != GetPosInWorld(tank)) {
-						level.aplly_map_to_map(level.colision_map, level.empty_colisoin, x, y, 1);
+						m_level->aplly_map_to_map(m_level->colision_map, m_level->empty_colisoin, x, y, 1);
 						xy = GetPosInWorld(tank);
-						level.aplly_map_to_map(level.colision_map, level.tmp_map = level.get_tank_colision(i + 1), xy.x, xy.y, 1);
+						m_level->aplly_map_to_map(m_level->colision_map, m_level->tmp_map = m_level->get_tank_colision(i + 1), xy.x, xy.y, 1);
 					}
 				}
 				else

@@ -6,6 +6,7 @@
 #include "Tank.h"
 #include "Controls.h"
 #include "Bullet.h"
+#include "Score.h"
 class Game
 {
 private:
@@ -16,16 +17,18 @@ private:
 	Tanks m_tanks;
 	Controls m_controls;
 	Bullets m_bullets;
+	Score m_score;
 	bool m_run = true;
 	sf::Texture m_texure;
 	long m_count = 0, m_second = 0, m_r_second = 0;
 	int m_select_level = 0;
+	int m_players = 0;
 
 	//TEST
 	bool r_exp = 0;
 
 public:
-	Game(Window* window);
+	Game(Window* window, int players, int select_level);
 	void run();
 private:
 	void event();

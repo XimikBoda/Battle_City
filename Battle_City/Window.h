@@ -8,7 +8,7 @@
 class Window
 {
 public:
-    explicit Window(const std::string& title = "Battle City", uint32_t width = 800, uint32_t height = 600);
+    explicit Window(const std::string& title = "Battle City", uint32_t width = 1000, uint32_t height = 800);
 
     void setToCenter();
 

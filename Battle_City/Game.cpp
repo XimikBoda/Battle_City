@@ -1,16 +1,19 @@
 #include "Game.h"
 
-Game::Game(Window* window)
+Game::Game(Window* window, int players, int select_level)
 {
 	m_window = window;
+	m_players = players;
+	m_select_level = select_level;
 	m_texure.loadFromFile("sprites.png");
-	m_explosion.init(&m_texure, &m_window->m_window);
+	m_score.init(&m_texure, &m_window->m_window, &m_count);
+	m_explosion.init(&m_texure, &m_window->m_window, &m_count, &m_score);
 	m_interface.init(&m_level);
-	m_tanks.init(&m_level, &m_texure,&m_bullets);
-	m_bullets.init(&m_texure,&m_level,&m_explosion,&m_count);
+	m_tanks.init(&m_level, &m_texure,&m_bullets,&m_explosion);
+	m_bullets.init(&m_texure,&m_level,&m_explosion,&m_count,&m_tanks);
 	m_level.init(&m_texure);
 	m_level.load_from_original_binary("standart_levels.bin");
-	m_level.set_map(0);
+	m_level.set_map(m_select_level%35);
 }
 void Game::run()
 {
@@ -78,6 +81,7 @@ void Game::mainCycles()
 	m_tanks.UpdateP(m_controls);
 	m_tanks.UpdatePos(m_level);
 	m_explosion.Update(m_count);
+	m_score.Update(m_count);
 }
 
 void Game::mainDraw()
@@ -88,6 +92,7 @@ void Game::mainDraw()
 	m_bullets.Draw(&m_window->m_window);
 	m_level.DrawFront(&m_window->m_window);
 	m_explosion.Draw();
+	m_score.Draw();
 	m_tanks.DrawColosion(&m_window->m_window);
 }
 

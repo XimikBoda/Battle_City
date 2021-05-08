@@ -1,9 +1,9 @@
 #include "Game.h"
-
-int main() 
+#include "MainMenu.h"
+int main(int args,char **argv) 
 {
 	Window window;
 	window.setToCenter();
-	Game game(&window);
-	game.run();
+	MainMenu menu(&window);
+	menu.Run();
 }
