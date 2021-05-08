@@ -60,6 +60,7 @@ class Tanks
 	Level* m_level;
 	Bullets* m_bullets;
 	Explosion* m_explosion;
+	Controls* m_controls;
 
 	sf::Vector2i GetPosInWorld(const Tank& tank);
 	void Rotate(Tank& tank, int new_rotate = 0);
@@ -67,7 +68,7 @@ class Tanks
 	void changeDirection2(Tank tank);
 	void Destroy(Tank& tank);
 public:
-	void init(Level* level, sf::Texture* texture, Bullets* bullets, Explosion* explosion);
+	void init(Level* level, sf::Texture* texture, Bullets* bullets, Explosion* explosion, Controls* controls);
 	//void AddTank(entt::registry& registry, sf::Vector2i pos, int number = 0, int type_ind = 0, int rotate = 0);
 	//void UpdateKeyState(entt::registry& registry);
 	void HitBy(int tank_to, int tank_by) {
@@ -77,11 +78,11 @@ public:
 		Destroy(tanks[tank_to]);
 	}
 	void UpdateAi();
-	void UpdateP(Controls& controls);
+	void UpdateP();
 	void UpdatePos();
 
 	void Draw(sf::RenderTarget* ren);
 	void DrawColosion(sf::RenderTarget* ren, sf::Vector2f pos = { 0,0 });
-	void imguiDraw(Level& m_level);
+	void imguiDraw();
 
 };

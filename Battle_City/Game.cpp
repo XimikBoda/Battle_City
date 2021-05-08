@@ -8,8 +8,8 @@ Game::Game(Window* window, int players, int select_level)
 	m_texure.loadFromFile("sprites.png");
 	m_score.init(&m_texure, &m_window->m_window, &m_count);
 	m_explosion.init(&m_texure, &m_window->m_window, &m_count, &m_score);
-	m_interface.init(&m_level);
-	m_tanks.init(&m_level, &m_texure,&m_bullets,&m_explosion);
+	m_interface.init(&m_level,&m_texure);
+	m_tanks.init(&m_level, &m_texure,&m_bullets,&m_explosion,&m_controls);
 	m_bullets.init(&m_texure,&m_level,&m_explosion,&m_count,&m_tanks);
 	m_level.init(&m_texure);
 	m_level.load_from_original_binary("standart_levels.bin");
@@ -78,15 +78,15 @@ void Game::mainCycles()
 			rand() % m_window->m_window.getSize().y)), Explosion::Big, 0);*/
 	m_bullets.Update();
 	m_tanks.UpdateAi();
-	m_tanks.UpdateP(m_controls);
-	m_tanks.UpdatePos(m_level);
+	m_tanks.UpdateP();
+	m_tanks.UpdatePos();
 	m_explosion.Update(m_count);
 	m_score.Update(m_count);
 }
 
 void Game::mainDraw()
 {
-	m_interface.Draw(&m_window->m_window);
+	m_interface.Draw(&m_window->m_window,20,2,9,9,35);
 	m_level.DrawBack(&m_window->m_window, m_count);
 	m_tanks.Draw(&m_window->m_window);
 	m_bullets.Draw(&m_window->m_window);
@@ -100,7 +100,7 @@ void Game::imguiDraw()
 {
 	ImGui::ShowDemoWindow();
 	m_window->imguiDraw();
-	m_tanks.imguiDraw(m_level);
+	m_tanks.imguiDraw();
 	ImGui::Begin("Debug");
 	ImGui::Text("Frame count %d", m_count);
 	ImGui::Text("Second count %d", m_second);

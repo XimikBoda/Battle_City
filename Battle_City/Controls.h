@@ -16,20 +16,6 @@ class Controls
 public:
 	Control control[2] = { {sf::Keyboard::W,sf::Keyboard::S,sf::Keyboard::A,sf::Keyboard::D,sf::Keyboard::Space},
 		{sf::Keyboard::Up,sf::Keyboard::Down,sf::Keyboard::Left,sf::Keyboard::Right,sf::Keyboard::RControl} };
-	void Update() {
-		for (int i = 0; i < 2; ++i) {
-			control[i].up = sf::Keyboard::isKeyPressed(control[i].kup);
-			control[i].down = sf::Keyboard::isKeyPressed(control[i].kdown);
-			control[i].left = sf::Keyboard::isKeyPressed(control[i].kleft);
-			control[i].right = sf::Keyboard::isKeyPressed(control[i].kright);
-			if (control[i].shot_) {
-				control[i].shot = 0;
-				if (!sf::Keyboard::isKeyPressed(control[i].kshot)) {
-					control[i].shot_ = 0;
-				}
-			}else
-				control[i].shot = sf::Keyboard::isKeyPressed(control[i].kshot);
-		}
-	}
+	void Update();
 };
 

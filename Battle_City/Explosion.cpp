@@ -20,12 +20,7 @@ void Explosion::Create(sf::Vector2f pos, Type type, int score)
 }
 void Explosion::Create( sf::Vector2i pos, Type type, int score)
 {
-	sf::Sprite sprite;
-	sprite.setOrigin(16, 16);
-	sprite.setTexture(*texture);
-	sprite.setPosition(sf::Vector2f(pos.x, pos.y));
-	//sprite.setScale(2,2);
-	exps.push_back(Exp(*m_count, sf::Vector2f(pos.x,pos.y), type, score, sprite));
+	Create(sf::Vector2f(pos.x, pos.y),type,score);
 }
 
 void Explosion::Update(long count) {

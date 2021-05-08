@@ -38,10 +38,11 @@ void Tanks::Destroy(Tank& tank) {
 	m_explosion->Create(tank.pos,Explosion::Big,(tank.type_ind>=4?( tank.type_ind-3 )*100:0));
 }
 
-void Tanks::init(Level* level, sf::Texture* texture, Bullets* bullets, Explosion* explosion) {
+void Tanks::init(Level* level, sf::Texture* texture, Bullets* bullets, Explosion* explosion, Controls* controls) {
 	m_level = level;
 	m_bullets = bullets;
 	m_explosion = explosion;
+	m_controls = controls;
 	tanks.resize(6);
 	tankType.init(texture);
 	tanks[0]={{8 * 8 + 8,26 * 8 + 8},0,0,0,1,1,-1 };
@@ -83,13 +84,13 @@ void Tanks::UpdateAi()
 		}
 }
 
-void Tanks::UpdateP(Controls& controls)
+void Tanks::UpdateP()
 {
 	for (int i = 0; i < 2; ++i)
 		if (tanks[i].active && !tanks[i].ai)
 		{
 			auto& tank = tanks[i];
-			auto& control = controls.control[i];
+			auto& control = m_controls->control[i];
 			if (tank.is_move = (control.up || control.down || control.left || control.right))
 				if (!((control.up && tank.rotation == 0) || (control.right && tank.rotation == 1) ||
 					(control.down && tank.rotation == 2) || (control.left && tank.rotation == 3)))
@@ -176,7 +177,7 @@ void Tanks::DrawColosion(sf::RenderTarget* ren, sf::Vector2f pos)
 		}
 }
 
-void Tanks::imguiDraw(Level& m_level) {
+void Tanks::imguiDraw() {
 	ImGui::Begin("Tanks");
 	ImGui::Checkbox("Draw colision", &draw_colision);
 	for (int i = 0; i < tanks.size(); ++i)

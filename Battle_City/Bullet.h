@@ -22,15 +22,14 @@ class Bullets
 	Tanks* m_tanks;
 	long* m_count;
 	sf::Texture* texture;
-public:
-	void init(sf::Texture* texture, Level* level, Explosion* explosion, long* count, Tanks* tanks);
-	void AddBullet(sf::Vector2i pos, int rotation, int speed, bool power, int tank);
 	int CheakColisionWithBullets(int j);
 	bool CheakColisionWithTanks(Bullet& bullet);
 	bool CheakColisionWithBlocks(Bullet& bullet);
 	void DeleteInd(int i);
-
 	void UpdatePos(Bullet& bullet);
+public:
+	void init(sf::Texture* texture, Level* level, Explosion* explosion, long* count, Tanks* tanks);
+	void AddBullet(sf::Vector2i pos, int rotation, int speed, bool power, int tank);
 	void Update();
 	void Draw(sf::RenderTarget* ren);
 };
