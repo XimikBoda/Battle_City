@@ -3,6 +3,7 @@
 #include <fstream>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include "ResourceManager.h"
 
 sf::Color HSVtoRGB(long long H, double S, double V) {
 	H %= 360;
@@ -71,15 +72,18 @@ void Level::init(sf::Texture* texture)
 	this->texture = texture;
 }
 
-void Level::load_from_original_binary(const std::string& str, int w, int h)
+void Level::load_from_original_binary( int w, int h)
 {
-	std::ifstream in(str, std::ios::binary);
+	/*std::ifstream in(str, std::ios::binary);
 	in.seekg(0, std::ios::end);
 	auto buf_s = in.tellg();
 	in.seekg(0, std::ios::beg);
 	unsigned char* buf = new unsigned char[buf_s];
 	in.read((char*)buf, buf_s);
-	in.close();
+	in.close();*/
+	unsigned char* buf=0;
+	size_t buf_s =0;
+	LoadBinFromResource(L"standart_levelsbin",buf, buf_s);
 	Map tmp;
 	tmp.resize(w * 2, h * 2);
 	for (int i = 0; i < buf_s / (w * h / 2); ++i)
@@ -91,7 +95,7 @@ void Level::load_from_original_binary(const std::string& str, int w, int h)
 		}
 		maps.push_back(tmp);
 	}
-	delete[] buf;
+	//delete[] buf;
 }
 
 void Level::aplly_map_to_map(Map& a, Map& b, int x, int y, bool t)

@@ -153,7 +153,9 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Score.cpp" />
+    <ClCompile Include="ScoreBoard.cpp" />
     <ClCompile Include="SpawnFire.cpp" />
     <ClCompile Include="Tank.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -166,10 +168,22 @@
     <ClInclude Include="Interface.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Score.h" />
+    <ClInclude Include="ScoreBoard.h" />
     <ClInclude Include="SpawnFire.h" />
     <ClInclude Include="Tank.h" />
     <ClInclude Include="Window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Battle_City.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="barcade-brawl.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

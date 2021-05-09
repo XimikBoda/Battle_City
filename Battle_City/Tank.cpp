@@ -35,15 +35,25 @@ void Tanks::Destroy(Tank& tank) {
 	int x = xy.x, y = xy.y;
 	m_level->aplly_map_to_map(m_level->colision_map, m_level->empty_colisoin, x, y, 1);
 	tank.active = 0;
-	m_explosion->Create(tank.pos,Explosion::Big,(tank.type_ind>=4?( tank.type_ind-3 )*100:0));
+	m_explosion->Create(tank.pos, Explosion::Big, (tank.type_ind >= 4 ? (tank.type_ind - 3) * 100 : 0));
 }
 
-void Tanks::init(Level* level, sf::Texture* texture, Bullets* bullets, Explosion* explosion, Controls* controls, SpawnFire* spawnFire) {
+bool Tanks::onIce(Tank& tank) {
+	auto xy = GetPosInWorld(tank);
+	int x = xy.x, y = xy.y;
+	return m_level->get_block(x, y) == 0x12 && m_level->get_block(x, y + 1) == 0x12 &&
+		m_level->get_block(x + 1, y) == 0x12 && m_level->get_block(x + 1, y + 1) == 0x12;
+
+}
+
+void Tanks::init(Level* level, sf::Texture* texture, Bullets* bullets, Explosion* explosion,
+	Controls* controls, SpawnFire* spawnFire, std::vector<std::vector<int>>* destroed) {
 	m_level = level;
 	m_bullets = bullets;
 	m_explosion = explosion;
 	m_controls = controls;
 	m_spawnFire = spawnFire;
+	this->destroed = destroed;
 	tanks.resize(6);
 	tankType.init(texture);
 	//tanks[0]={{8 * 8 + 8,26 * 8 + 8},0,0,0,1,1,-1 };
@@ -68,8 +78,10 @@ void Tanks::HitBy(int tank_to, int tank_by) {
 		return;
 	if (tank_to < 2 && tank_by>1)
 		Destroy(tanks[tank_to]);
-	else if (tank_by < 2 && tank_to>1)
+	else if (tank_by < 2 && tank_to>1) {
+		(*destroed)[tank_by][tanks[tank_to].type_ind % 4]++;
 		Destroy(tanks[tank_to]);
+	}
 }
 
 void Tanks::UpdateAi(long count)
@@ -78,7 +90,7 @@ void Tanks::UpdateAi(long count)
 		if (tanks[i].active && tanks[i].ai)
 		{
 			auto& tank = tanks[i];
-			tank.live_time+= (count%64)==0;
+			tank.live_time += (count % 64) == 0;
 			tank.is_move = 1;
 			int tmp = tankType.tanks_types[tank.type_ind].speed;
 			if (!(tmp == 4 || ((tank.time_to_move + 1) % tmp)))
@@ -92,7 +104,7 @@ void Tanks::UpdateAi(long count)
 				else
 					changeDirection2(tank);
 			}
-			if (rand()%32==0) {
+			if (rand() % 32 == 0) {
 				sf::Vector2i moveVec((tank.rotation == 1) - (tank.rotation == 3), (tank.rotation == 2) - (tank.rotation == 0));
 				moveVec.x *= 6;
 				moveVec.y *= 6;
@@ -111,7 +123,7 @@ void Tanks::UpdateP()
 			if (tank.is_move = (control.up || control.down || control.left || control.right))
 				if (!((control.up && tank.rotation == 0) || (control.right && tank.rotation == 1) ||
 					(control.down && tank.rotation == 2) || (control.left && tank.rotation == 3)))
-					Rotate(tank,(control.up ? 0 : (control.right ? 1 :
+					Rotate(tank, (control.up ? 0 : (control.right ? 1 :
 						(control.down ? 2 : (control.left ? 3 : 0)))));
 			if (control.shot) {
 				control.shot = 0;
@@ -119,7 +131,7 @@ void Tanks::UpdateP()
 				sf::Vector2i moveVec((tank.rotation == 1) - (tank.rotation == 3), (tank.rotation == 2) - (tank.rotation == 0));
 				moveVec.x *= 6;
 				moveVec.y *= 6;
-				m_bullets->AddBullet(tank.pos+ moveVec,tank.rotation,tankType.tanks_types[tank.type_ind].bullet_speed, tankType.tanks_types[tank.type_ind].bullet_power,i);
+				m_bullets->AddBullet(tank.pos + moveVec, tank.rotation, tankType.tanks_types[tank.type_ind].bullet_speed, tankType.tanks_types[tank.type_ind].bullet_power, i);
 			}
 
 		}
@@ -128,13 +140,13 @@ void Tanks::UpdateP()
 void Tanks::UpdatePos()
 {
 	for (int i = 0; i < tanks.size(); ++i)
-		if (tanks[i].active && (tanks[i].is_move|| onIce(tanks[i])&& tanks[i].time_in_ice<28))
+		if (tanks[i].active && (tanks[i].is_move || onIce(tanks[i]) && tanks[i].time_in_ice < 28))
 		{
 			auto& tank = tanks[i];
 			sf::Vector2i moveVec((tank.rotation == 1) - (tank.rotation == 3), (tank.rotation == 2) - (tank.rotation == 0));
 			tank.time_to_move = (tank.time_to_move + 1) % 4;
 			int tmp = tankType.tanks_types[tank.type_ind].speed;
-			if (tmp == 4 || ((tank.time_to_move+1) % tmp))
+			if (tmp == 4 || ((tank.time_to_move + 1) % tmp))
 			{
 
 				auto xy = GetPosInWorld(tank);
@@ -189,7 +201,7 @@ void Tanks::Draw(sf::RenderTarget* ren)
 		if (tanks[i].active) {
 			auto& tank = tanks[i];
 			int tmp = tank.rotation % 4;
-			if (i ==0)
+			if (i == 0)
 				sprite.setColor(sf::Color(252, 228, 160));
 			else if (i == 1)
 				sprite.setColor(sf::Color(176, 252, 204));
@@ -277,4 +289,22 @@ void Tanks::logic(int m_players, int respawn_time, int& atanks, int lives[2]) {
 		else if (time_to_spawn == -1)
 			time_to_spawn = respawn_time;
 	}
+}
+
+bool Tanks::Cheak_lives(int m_players, int lives[2])
+{
+	bool ch = 0;
+	for (int i = 0; i < m_players; ++i)
+		if (tanks[i].active || tanks[i].time_tospawn != -1 || lives[i])
+			ch = 1;
+	return ch;
+}
+
+bool Tanks::Cheak_enemy(int atanks)
+{
+	bool ch = 0;
+	for (int i = 2; i < 6; ++i)
+		if (tanks[i].active || tanks[i].time_tospawn != -1 || atanks)
+			ch = 1;
+	return ch;
 }

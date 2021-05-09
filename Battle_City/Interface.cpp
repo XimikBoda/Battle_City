@@ -55,3 +55,12 @@ void Interface::Draw(sf::RenderTarget* ren, int atank, int payers, int p1, int p
 	sp.setPosition(l + 8, 184 + 16);
 	ren->draw(sp);
 }
+
+void Interface::ShowGameOver(sf::RenderTarget* ren)
+{
+	sf::Sprite sp(*m_texture);
+	sp.setTextureRect(sf::IntRect(128, 104, 32, 16));
+	sp.setOrigin(16,8);
+	sp.setPosition((level->act_map.size().x + 4) * 8/2, (level->act_map.size().x + 2) * 8/2);
+	ren->draw(sp);
+}

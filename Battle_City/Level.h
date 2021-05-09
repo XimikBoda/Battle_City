@@ -108,7 +108,7 @@ public:
 	Map act_map, colision_map, empty_colisoin = { { {0,0},{0,0}  } }, tmp_map;
 	Map get_tank_colision(int tank_number);
 	void init(sf::Texture* texture);
-	void load_from_original_binary(const std::string& str, int w = 13, int h = 14);
+	void load_from_original_binary( int w = 13, int h = 14);
 	void aplly_map_to_map(Map& a, Map& b, int x, int y, bool t = 1);
 	bool check_colision_on_curent_map(int x, int y);
 	void set_map(int index);

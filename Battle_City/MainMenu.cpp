@@ -1,12 +1,16 @@
 #include "MainMenu.h"
+#include "ScoreBoard.h"
+#include "ResourceManager.h"
 
 MainMenu::MainMenu(Window* window)
 {
 	m_window = window;
-	if (!font.loadFromFile("barcade-brawl.ttf"))
+	/*if (!font.loadFromFile("barcade-brawl.ttf"))
 		exit(1);
 	if (!logo.loadFromFile("logo.png"))
-		exit(1);
+		exit(1);*/
+	LoadFontFromResource(L"barcadebrawlttf", font);
+	LoadTextureFromResource(L"logopng", logo);
 	slogo.setTexture(logo);
 	slogo.setOrigin(logo.getSize().x / 2, logo.getSize().y / 2);
 	slogo.scale(0.5, 0.5);
@@ -66,6 +70,10 @@ void MainMenu::Events() {
 				}
 				break;
 				case 2:
+				{
+					ScoreBoard sb(m_window);
+					sb.Run();
+				}
 					break;
 				case 3:
 					run = false;

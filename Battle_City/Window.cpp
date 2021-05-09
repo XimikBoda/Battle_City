@@ -4,8 +4,10 @@ Window::Window(const std::string& title, uint32_t width, uint32_t height)
 {
     m_window.create(sf::VideoMode(width, height), title);
     m_window.setFramerateLimit(m_fps);
+#ifdef _DEBUG
     ImGui::SFML::Init(m_window);
     ImGui::SFML::UpdateFontTexture();
+#endif // _DEBUG
     // for(auto const &i:sf::VideoMode::getFullscreenModes()){
      //    std::cout<<i.width<<'x'<<i.height<<' '<<i.bitsPerPixel<<"bit\n";
      //}
@@ -49,10 +51,13 @@ void Window::imguiDraw()
 }
 
 bool Window::event(sf::Event& event) {
+#ifdef _DEBUG
     ImGui::SFML::ProcessEvent(event);
     ImGuiIO const& imGuiIo = ImGui::GetIO();
     if (imGuiIo.WantCaptureKeyboard || imGuiIo.WantCaptureMouse)
         return true;
+#endif // _DEBUG
+   
 
     switch (event.type) {
     case sf::Event::Resized:
@@ -77,7 +82,9 @@ bool Window::event(sf::Event& event) {
 void Window::postEvents()
 {
     m_window.clear(sf::Color(20, 20, 20));
+#ifdef _DEBUG
     ImGui::SFML::Update(m_window, m_deltaClock.restart());
+#endif // _DEBUG
 }
 
 void Window::setFullScreen(bool fullScreen)

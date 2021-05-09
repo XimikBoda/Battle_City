@@ -67,21 +67,17 @@ class Tanks
 	SpawnFire* m_spawnFire;
 	int time_to_spawn = 1;
 	int spawn_point = 0;
+	std::vector<std::vector<int>> *destroed;
 
 	sf::Vector2i GetPosInWorld(const Tank& tank);
 	void Rotate(Tank& tank, int new_rotate = 0);
 	void changeDirection(Tank& tank);
 	void changeDirection2(Tank tank);
 	void Destroy(Tank& tank);
-	bool onIce(Tank& tank) {
-		auto xy = GetPosInWorld(tank);
-		int x = xy.x, y = xy.y;
-		return m_level->get_block(x, y)==0x12&& m_level->get_block(x, y+1) == 0x12&& 
-			m_level->get_block(x+1, y) == 0x12&& m_level->get_block(x+1, y+1) == 0x12;
-			
-	}
+	bool onIce(Tank& tank);
 public:
-	void init(Level* level, sf::Texture* texture, Bullets* bullets, Explosion* explosion, Controls* controls, SpawnFire* spawnFire);
+	void init(Level* level, sf::Texture* texture, Bullets* bullets, Explosion* explosion,
+		Controls* controls, SpawnFire* spawnFire, std::vector<std::vector<int>>* destroed);
 	//void AddTank(entt::registry& registry, sf::Vector2i pos, int number = 0, int type_ind = 0, int rotate = 0);
 	//void UpdateKeyState(entt::registry& registry);
 	void HitBy(int tank_to, int tank_by);
@@ -95,5 +91,11 @@ public:
 	void imguiDraw();
 	void spawn_tank(sf::Vector2i pos, int rotation, bool ai, int type_ind, int number, int ind);
 	void logic(int m_players, int respawn_time, int& atanks, int lives[2]);
+	bool Cheak_lives(int m_players, int lives[2]);
+	bool Cheak_enemy(int atanks);
+	void Desctoy_all() {
+		for (int i = 0; i < 6; ++i)
+			Destroy(tanks[i]);
+	}
 
 };

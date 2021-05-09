@@ -29,6 +29,9 @@ private:
 	
 	int atanks = 20;
 	int lives[2] = { 3,3 };
+	std::vector<std::vector<int>> destroed = { {0,0,0,0}, {0,0,0,0} };
+	int gameOver = -1;
+	int score = 0;
 
 	//TEST
 	bool r_exp = 0;

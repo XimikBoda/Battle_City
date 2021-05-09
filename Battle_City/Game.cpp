@@ -1,19 +1,22 @@
 #include "Game.h"
+#include "ScoreBoard.h"
+#include "ResourceManager.h"
 
 Game::Game(Window* window, int players, int select_level)
 {
 	m_window = window;
 	m_players = players;
 	m_select_level = select_level;
-	m_texure.loadFromFile("sprites.png");
+	//m_texure.loadFromFile("sprites.png");
+	LoadTextureFromResource(L"spritespng", m_texure);
 	m_score.init(&m_texure, &m_window->m_window, &m_count);
 	m_explosion.init(&m_texure, &m_window->m_window, &m_count, &m_score);
 	m_spawnFire.init(&m_texure, &m_window->m_window, &m_count);
 	m_interface.init(&m_level,&m_texure);
-	m_tanks.init(&m_level, &m_texure,&m_bullets,&m_explosion,&m_controls,&m_spawnFire);
+	m_tanks.init(&m_level, &m_texure,&m_bullets,&m_explosion,&m_controls,&m_spawnFire,&destroed);
 	m_bullets.init(&m_texure,&m_level,&m_explosion,&m_count,&m_tanks);
 	m_level.init(&m_texure);
-	m_level.load_from_original_binary("standart_levels.bin");
+	m_level.load_from_original_binary();
 	m_level.set_map(m_select_level%35);
 	m_level.spawn_staff(0);
 }
@@ -75,7 +78,36 @@ void Game::postEvents()
 
 void Game::mainCycles()
 {
+	if (gameOver > -1)
+		gameOver--;
+	if (gameOver == 0) {
+		for (int i = 0; i < 2; ++i)
+			for (int j = 0; j < 4; ++j)
+				score += destroed[i][j]*(j+1)*100;
+		ScoreBoard sb(m_window);
+		sb.Add(score);
+		sb.Run();
+		m_run = false;
+	}
 	m_tanks.logic(m_players,190-m_select_level*4- (m_players - 1) * 20,atanks,lives);
+	if ((!m_tanks.Cheak_lives(m_players, lives) || !m_level.cheak_staff())&&gameOver==-1)
+		gameOver = 64;
+	if (!m_tanks.Cheak_enemy(atanks)) {
+		m_select_level += 1;
+		m_level.set_map(m_select_level % 35);
+		m_level.spawn_staff(0);
+		m_tanks.Desctoy_all();
+		m_count = 0, m_second = 0, m_r_second = 0;
+		lives[0]++;
+		lives[1]++;
+		atanks = 20;
+		gameOver = -1;
+		for (int i = 0; i < 2; ++i)
+			for (int j = 0; j < 4; ++j)
+				score += destroed[i][j] * (j + 1) * 100;
+		destroed = { {0,0,0,0}, {0,0,0,0} };
+	}
+
 	m_controls.Update();
 	m_interface.Update(&m_window->m_window);
 	/*if (r_exp)
@@ -102,6 +134,9 @@ void Game::mainDraw()
 	m_explosion.Draw();
 	m_score.Draw();
 	m_tanks.DrawColosion(&m_window->m_window);
+	if (gameOver > -1)
+		m_interface.ShowGameOver(&m_window->m_window);
+
 }
 
 void Game::imguiDraw()
@@ -121,7 +156,9 @@ void Game::imguiDraw()
 
 void Game::render()
 {
+#ifdef _DEBUG
 	ImGui::SFML::Render(m_window->m_window);
+#endif // _DEBUG
 	m_window->m_window.display();
 	m_count++;
 	m_second += m_count % 64 == 0;
