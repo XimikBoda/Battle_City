@@ -64,3 +64,12 @@ void Interface::ShowGameOver(sf::RenderTarget* ren)
 	sp.setPosition((level->act_map.size().x + 4) * 8/2, (level->act_map.size().x + 2) * 8/2);
 	ren->draw(sp);
 }
+
+void Interface::ShowDark(sf::RenderTarget* ren,int t) {
+	auto map_size = level->get_size_curent_map();
+	sf::RectangleShape rs;
+	//rs.setPosition(map_size.x / 2 * 8, map_size.y / 2 * 8);
+	rs.setSize(sf::Vector2f(map_size.x  * 8, map_size.y  * 8));
+	rs.setFillColor(sf::Color(0,0,0,255.*float(t)/20.));
+	ren->draw(rs);
+}

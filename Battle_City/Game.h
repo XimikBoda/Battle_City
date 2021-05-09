@@ -25,6 +25,7 @@ private:
 	long m_count = 0, m_second = 0, m_r_second = 0;
 	int m_select_level = 0;
 	int m_players = 0;
+	int anim_t = 20;
 	
 	
 	int atanks = 20;

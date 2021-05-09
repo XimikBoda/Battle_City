@@ -11,7 +11,7 @@ class MainMenu
 	sf::Font font;
 	sf::Texture logo;
 	sf::Sprite slogo;
-	std::string menu_punct[4] = { "1 Player" ,"2 Player" ,"Records","Exit" };
+	std::string menu_punct[4] = { "1 Player" ,"2 Players" ,"Records","Exit" };
 public:
 	MainMenu(Window* window);
 	void Run();

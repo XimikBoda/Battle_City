@@ -49,6 +49,16 @@ void Game::event()
 		case sf::Event::Closed:
 			exit(0);
 			break;
+		case sf::Event::KeyPressed:
+			switch (event.key.code)
+			{
+			case sf::Keyboard::Escape:
+				m_run = 0;
+				break;
+			default:
+				break;
+			}
+			break;
 		case sf::Event::MouseButtonPressed:
 		{
 			sf::Vector2f worldPos = m_window->m_window.mapPixelToCoords(sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
@@ -93,20 +103,25 @@ void Game::mainCycles()
 	if ((!m_tanks.Cheak_lives(m_players, lives) || !m_level.cheak_staff())&&gameOver==-1)
 		gameOver = 64;
 	if (!m_tanks.Cheak_enemy(atanks)) {
-		m_select_level += 1;
-		m_level.set_map(m_select_level % 35);
-		m_level.spawn_staff(0);
-		m_tanks.Desctoy_all();
-		m_count = 0, m_second = 0, m_r_second = 0;
-		lives[0]++;
-		lives[1]++;
-		atanks = 20;
-		gameOver = -1;
-		for (int i = 0; i < 2; ++i)
-			for (int j = 0; j < 4; ++j)
-				score += destroed[i][j] * (j + 1) * 100;
-		destroed = { {0,0,0,0}, {0,0,0,0} };
+		if (anim_t == 20) {
+			m_select_level += 1;
+			m_level.set_map(m_select_level % 35);
+			m_level.spawn_staff(0);
+			m_tanks.Desctoy_all();
+			m_count = 0, m_second = 0, m_r_second = 0;
+			lives[0]++;
+			lives[1]++;
+			atanks = 20;
+			gameOver = -1;
+			for (int i = 0; i < 2; ++i)
+				for (int j = 0; j < 4; ++j)
+					score += destroed[i][j] * (j + 1) * 100;
+			destroed = { {0,0,0,0}, {0,0,0,0} };
+		}
+		anim_t++;
 	}
+	else if (anim_t)
+		anim_t--;
 
 	m_controls.Update();
 	m_interface.Update(&m_window->m_window);
@@ -125,18 +140,20 @@ void Game::mainCycles()
 
 void Game::mainDraw()
 {
-	m_interface.Draw(&m_window->m_window,atanks,m_players,lives[0],lives[1], m_select_level+1);
-	m_level.DrawBack(&m_window->m_window, m_count);
-	m_tanks.Draw(&m_window->m_window);
-	m_bullets.Draw(&m_window->m_window);
-	m_level.DrawFront(&m_window->m_window);
+	sf::RenderTarget* ren = &m_window->m_window;
+	m_interface.Draw(ren,atanks,m_players,lives[0],lives[1], m_select_level+1);
+	m_level.DrawBack(ren, m_count);
+	m_tanks.Draw(ren);
+	m_bullets.Draw(ren);
+	m_level.DrawFront(ren);
 	m_spawnFire.Draw();
 	m_explosion.Draw();
 	m_score.Draw();
-	m_tanks.DrawColosion(&m_window->m_window);
+	m_tanks.DrawColosion(ren);
 	if (gameOver > -1)
-		m_interface.ShowGameOver(&m_window->m_window);
-
+		m_interface.ShowGameOver(ren);
+	if (anim_t)
+		m_interface.ShowDark(ren,anim_t);
 }
 
 void Game::imguiDraw()

@@ -9,7 +9,7 @@ class ScoreBoard
 	json table;
 	int n = 0;
 	sf::Font font;
-	int new_score=0;
+	int new_score=-1;
 	int ind = -1;
 	sf::String new_name="Type your name";
 public:
