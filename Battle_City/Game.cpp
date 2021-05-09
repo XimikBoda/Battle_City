@@ -8,12 +8,14 @@ Game::Game(Window* window, int players, int select_level)
 	m_texure.loadFromFile("sprites.png");
 	m_score.init(&m_texure, &m_window->m_window, &m_count);
 	m_explosion.init(&m_texure, &m_window->m_window, &m_count, &m_score);
+	m_spawnFire.init(&m_texure, &m_window->m_window, &m_count);
 	m_interface.init(&m_level,&m_texure);
-	m_tanks.init(&m_level, &m_texure,&m_bullets,&m_explosion,&m_controls);
+	m_tanks.init(&m_level, &m_texure,&m_bullets,&m_explosion,&m_controls,&m_spawnFire);
 	m_bullets.init(&m_texure,&m_level,&m_explosion,&m_count,&m_tanks);
 	m_level.init(&m_texure);
 	m_level.load_from_original_binary("standart_levels.bin");
 	m_level.set_map(m_select_level%35);
+	m_level.spawn_staff(0);
 }
 void Game::run()
 {
@@ -23,7 +25,9 @@ void Game::run()
 		postEvents();
 		mainCycles();
 		mainDraw();
+#ifdef _DEBUG
 		imguiDraw();
+#endif // _DEBUG
 		render();
 	}
 }
@@ -71,26 +75,30 @@ void Game::postEvents()
 
 void Game::mainCycles()
 {
+	m_tanks.logic(m_players,190-m_select_level*4- (m_players - 1) * 20,atanks,lives);
 	m_controls.Update();
 	m_interface.Update(&m_window->m_window);
 	/*if (r_exp)
 		m_explosion.Create(m_registry, m_window->m_window.mapPixelToCoords(sf::(rand() % m_window->m_window.getSize().x,
 			rand() % m_window->m_window.getSize().y)), Explosion::Big, 0);*/
 	m_bullets.Update();
-	m_tanks.UpdateAi();
+	m_tanks.UpdateSpawning();
+	m_tanks.UpdateAi(m_count);
 	m_tanks.UpdateP();
 	m_tanks.UpdatePos();
+	m_spawnFire.Update(m_count);
 	m_explosion.Update(m_count);
 	m_score.Update(m_count);
 }
 
 void Game::mainDraw()
 {
-	m_interface.Draw(&m_window->m_window,20,2,9,9,35);
+	m_interface.Draw(&m_window->m_window,atanks,m_players,lives[0],lives[1], m_select_level+1);
 	m_level.DrawBack(&m_window->m_window, m_count);
 	m_tanks.Draw(&m_window->m_window);
 	m_bullets.Draw(&m_window->m_window);
 	m_level.DrawFront(&m_window->m_window);
+	m_spawnFire.Draw();
 	m_explosion.Draw();
 	m_score.Draw();
 	m_tanks.DrawColosion(&m_window->m_window);

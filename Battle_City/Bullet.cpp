@@ -19,7 +19,7 @@ void Bullets::AddBullet(sf::Vector2i pos, int rotation, int speed, bool power, i
 int Bullets::CheakColisionWithBullets(int j)
 {
 	for (int i = j + 1; i < bullets.size(); ++i)
-		if (abs(bullets[i].pos.x - bullets[j].pos.x) <= 2 && abs(bullets[i].pos.y - bullets[j].pos.y) <= 2)
+		if (abs(bullets[i].pos.x - bullets[j].pos.x) <= 3 && abs(bullets[i].pos.y - bullets[j].pos.y) <= 3)
 			return i;
 	return -1;
 }
@@ -63,10 +63,16 @@ bool Bullets::CheakColisionWithBlocks(Bullet& bullet)
 	}
 	else
 		for (int i = 0; i < 2; ++i) {
-			if (bl[i] > 0 && bl[i] <= 15)
+			if(bl[i]>0&&bl[1-i]>=0x11&&bl[i]<=0x0f&&bl[1-i]<=0x15&& !(bl[i] & ~tst[bullet.rotation]))
+				m_level->set_block(xy[i].x, xy[i].y, 0);
+			else if (bl[i] > 0 && bl[i] <= 15)
 			{
 				m_level->set_block(xy[i].x, xy[i].y, bl[i] & tst[bullet.rotation]);
 				ch = 1;
+			}
+			else if (bl[i] >= 0x16 && bl[i] <= 0x19) {
+				ch = 1;
+				m_level->destroy_staff();
 			}
 			else if (bl[i] == 0xff || (!bullet.power && bl[i] == 16))
 				ch = 1;

@@ -186,6 +186,16 @@ bool Level::is_air(uint8_t bl)
 {
 	return bl == 0 || bl == 18 || bl == 17;
 }
+void Level::spawn_staff(bool type) {
+	aplly_map_to_map(act_map, staff_types[type], act_map.size().x / 2 - 2, act_map.size().y - 3);
+}
+void Level::destroy_staff() {
+	aplly_map_to_map(act_map, staff_types[2], act_map.size().x / 2 - 1, act_map.size().y - 2);
+}
+bool Level::cheak_staff()
+{
+	return get_block(act_map.size().x / 2 - 1, act_map.size().y - 2)==0x16;
+}
 bool Level::is_air(int x, int y, bool cheak_col)
 {
 	if (cheak_col && get_collision(x, y))

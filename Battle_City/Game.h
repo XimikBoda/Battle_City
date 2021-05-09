@@ -7,6 +7,7 @@
 #include "Controls.h"
 #include "Bullet.h"
 #include "Score.h"
+#include "SpawnFire.h"
 class Game
 {
 private:
@@ -18,11 +19,16 @@ private:
 	Controls m_controls;
 	Bullets m_bullets;
 	Score m_score;
+	SpawnFire m_spawnFire;
 	bool m_run = true;
 	sf::Texture m_texure;
 	long m_count = 0, m_second = 0, m_r_second = 0;
 	int m_select_level = 0;
 	int m_players = 0;
+	
+	
+	int atanks = 20;
+	int lives[2] = { 3,3 };
 
 	//TEST
 	bool r_exp = 0;
@@ -42,5 +48,7 @@ private:
 	void imguiDraw();
 
 	void render();
+
+
 };
 

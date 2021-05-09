@@ -39,7 +39,7 @@ void Interface::Draw(sf::RenderTarget* ren, int atank, int payers, int p1, int p
 		sp.setTextureRect(sf::IntRect(264, 40 + 3 * i * 8, 16, 16));
 		sp.setPosition(l, 136 + 8 * 3 * i);
 		ren->draw(sp);
-		sp.setTextureRect(getNumber(i ? p1 : p2));
+		sp.setTextureRect(getNumber(i ? p2 : p1));
 		sp.setPosition(l + 8, 136 + 8 + 8 * 3 * i);
 		ren->draw(sp);
 	}

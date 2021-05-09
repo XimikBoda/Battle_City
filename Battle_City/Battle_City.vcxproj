@@ -151,10 +151,10 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="Level.cpp" />
-    <ClCompile Include="Logic.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Score.cpp" />
+    <ClCompile Include="SpawnFire.cpp" />
     <ClCompile Include="Tank.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -165,9 +165,9 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Interface.h" />
     <ClInclude Include="Level.h" />
-    <ClInclude Include="Logic.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Score.h" />
+    <ClInclude Include="SpawnFire.h" />
     <ClInclude Include="Tank.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

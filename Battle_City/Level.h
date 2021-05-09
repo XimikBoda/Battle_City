@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include <SFML/Graphics/RenderTarget.hpp>
-	
+
 class Level
 {
 public:
@@ -86,8 +86,26 @@ private:
 			{0x00,0x00}
 		}}
 	};
+
+	Map staff_types[3] =
+	{
+		{{
+			{0x0F,0x0F,0x0F,0x0F},
+			{0x0F,0x16,0x17,0x0F},
+			{0x0F,0x18,0x19,0x0F}
+		}},
+		{{
+			{0x10,0x10,0x10,0x10},
+			{0x10,0x16,0x17,0x10},
+			{0x10,0x18,0x19,0x10}
+		}},
+		{{
+			{0x1A,0x1B},
+			{0x1C,0x1d}
+		}}
+	};
 public:
-	Map act_map, colision_map,  empty_colisoin = { { {0,0},{0,0}  } },tmp_map;
+	Map act_map, colision_map, empty_colisoin = { { {0,0},{0,0}  } }, tmp_map;
 	Map get_tank_colision(int tank_number);
 	void init(sf::Texture* texture);
 	void load_from_original_binary(const std::string& str, int w = 13, int h = 14);
@@ -101,6 +119,9 @@ public:
 	uint8_t get_block(int x, int y);
 	void set_block(int x, int y, uint8_t bl);
 	uint8_t get_collision(int x, int y);
-	bool is_air(int x, int y, bool cheak_col=0);
+	bool is_air(int x, int y, bool cheak_col = 0);
 	bool is_air(uint8_t bl);
+	void spawn_staff(bool type);
+	void destroy_staff();
+	bool cheak_staff();
 };
